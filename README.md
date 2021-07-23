@@ -498,7 +498,7 @@ If you want to configure Raspberry Pi as a software access point (SoftAP/hotspot
 
 1. Don't use sudo
 2. Don't configure dhcpcd or iptables
-3. Use vi to edit `/etc/dnsmasq.conf` and `/etc/hostapd.conf`
+3. Use cat to write out to `/etc/dnsmasq.conf` and `/etc/hostapd.conf` i.e. `cat > /etc/dnsmasq.conf`, type or paste the configuration, and press Control-D
 4. Reboot system using `reboot`
 5. Assign static IP address to interface `wlan0` - `ifconfig wlan0 up 192.168.4.1 netmask 255.255.255.0`
 6. Start hostapd service manually - `systemctl start hostapd`
