@@ -428,28 +428,29 @@ To disable serial console, comment out the following section in `kas.yml`
 ```yml
   console: |
     ENABLE_UART = "1"
-
-
+```
 
 ---
 
 ### Enable ADB daemon
 
-To enable [adbd](https://developer.android.com/studio/command-line/adb) on the device
+ADB daemon is enabled by default during build. To disable USB debugging at build time, remove `USB_DEBUGGING_ENABLED` or set to "0".
+
+Subsequently, to enable [ADB daemon](https://developer.android.com/studio/command-line/adb) on the device
 
 ```bash
 touch /var/usb-debugging-enabled
 reboot
 ```
 
-To list the device and gain shell access, on a host machine connected to the device via USB OTG port
+On a host machine connected to the device via USB OTG port, list the device and gain shell access
 
 ```bash
 adb devices
 adb shell
----
+```
 
-To disable USB debugging at build time, remove `USB_DEBUGGING_ENABLED` or set to "0".
+---
 
 ### Configure audio
 
@@ -467,7 +468,7 @@ To play test sound to HDMI display
 speaker-test -c2 iec958
 ```
 
-Use `alsamixer` and `amixer` to change audio settings
+Use `alsamixer` and `amixer` to change audio settings.
 
 ---
 
