@@ -481,13 +481,14 @@ wpa_passphrase ssid password
 
 Copy the output and add, all but the commented out plain text password line, to end of `/etc/wpa_supplicant.conf`.
 
-Bring up the Wi-Fi network
+Enable wpa_supplicant service and reboot
 
 ```bash
-ifup wlan0
+systemctl enable wpa_supplicant
+reboot
 ```
 
-With the board on the network, you can access it using ssh from the host.
+With the board on the network, you can access it using ssh from a host.
 
 ---
 
