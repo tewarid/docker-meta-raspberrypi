@@ -37,6 +37,9 @@ repos:
       flag-to-enable-adbd-at-build-time:
         repo: meta-openembedded
         path: ../../patches/0001-Add-flag-to-enable-adbd-at-build-time.patch
+      fix-errors-in-android-tools-conf-configfs:
+        repo: meta-openembedded
+        path: ../../patches/0001-Fix-errors-in-android-tools-conf-configfs.patch
 
   meta-clang:
     url: https://github.com/kraj/meta-clang.git
