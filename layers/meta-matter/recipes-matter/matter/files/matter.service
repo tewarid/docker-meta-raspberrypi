@@ -1,0 +1,12 @@
+[Unit]
+Description=Matter smart home device
+After=bluetooth.target
+Requires=bluetooth.target
+
+[Service]
+ExecStartPre=/bin/sleep 5
+ExecStart=/usr/bin/chip-all-clusters-app --wifi
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

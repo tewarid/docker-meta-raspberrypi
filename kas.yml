@@ -52,6 +52,9 @@ repos:
   meta-berry:
     path: layers/meta-berry
 
+  meta-matter:
+    path: layers/meta-matter
+
 bblayers_conf_header:
   standard: |
     POKY_BBLAYERS_CONF_VERSION = "2"
@@ -111,3 +114,5 @@ local_conf_header:
     VIRTUAL-RUNTIME_base-utils-hwclock = "toybox"
     VIRTUAL-RUNTIME_base-utils-syslog = "toybox"
     IMAGE_INSTALL_append = " dhcpcd"
+  matter: |
+    IMAGE_INSTALL_append = " matter"
