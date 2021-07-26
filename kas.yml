@@ -68,6 +68,8 @@ local_conf_header:
     USER_CLASSES = "buildstats image-mklibs image-prelink"
     PATCHRESOLVE = "noop"
     TCLIBC = "musl"
+    INHERIT += "buildhistory"
+    BUILDHISTORY_COMMIT = "0"
   debug-tweaks: |
     EXTRA_IMAGE_FEATURES = "debug-tweaks"
   diskmon: |
