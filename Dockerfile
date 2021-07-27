@@ -16,6 +16,8 @@ WORKDIR /home/yoctouser/berry
 
 SHELL ["/bin/bash", "-c"] 
 
-RUN kas build kas.yml
+ARG KAS_TARGET=""
+ENV KAS_TARGET=$KAS_TARGET
+RUN KAS_TARGET=$KAS_TARGET ./scripts/build.sh
 
 # At this point you can copy files to host if needed

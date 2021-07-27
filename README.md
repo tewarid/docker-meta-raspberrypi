@@ -78,6 +78,7 @@ Yocto Project provides no means to download layers, and setup configuration file
 - Generates build directory with
   - `conf/bblayers.conf` - list of layers to build
   - `conf/local.conf` - MACHINE and DISTRO configuration
+- Performs multiconfig builds specified via `KAS_TARGET` environment variable
 
 ---
 
@@ -155,6 +156,21 @@ raspberrypi3-64   | Raspberry Pi 3 64-bit build
 raspberrypi3      | Raspberry Pi 3 32-bit build
 raspberrypi4-64   | Raspberry Pi 4 64-bit build
 raspberrypi4      | Raspberry Pi 4 32-bit build
+
+---
+
+### Multiconfig build
+
+A multiconfig build can generate images for multiple targets in one build
+
+```bash
+export KAS_TARGET="mc:berry-raspberrypi0-wifi:core-image-base mc:berry-raspberrypi3:core-image-base mc:berry-raspberrypi4:core-image-base"
+./scripts/build.sh
+```
+
+Note that multiconfig builds may fail due to memory exhaustion when multiple memory intensive tasks such as LLVM build are run at the same time. The builds also require more storage due to usage of different `TMPDIR` for each target. Specify fewer targets in `KAS_TARGET` if your build environment is low on resources.
+
+Additional targets can be created under [`layers/meta-berry/conf/multiconfig`](layers/meta-berry/conf/multiconfig).
 
 ---
 
@@ -434,7 +450,7 @@ To disable serial console, comment out the following section in `kas.yml`
 
 ### Enable ADB daemon
 
-ADB daemon is enabled by default during build. To disable USB debugging at build time, remove `USB_DEBUGGING_ENABLED` or set to "0".
+ADB daemon is enabled by default. To disable USB debugging at build time, remove `USB_DEBUGGING_ENABLED` or set to "0".
 
 Subsequently, to enable [ADB daemon](https://developer.android.com/studio/command-line/adb) on the device
 
@@ -443,7 +459,7 @@ touch /var/usb-debugging-enabled
 reboot
 ```
 
-On a host machine connected to the device via USB OTG port, list the device and gain shell access
+On a host machine connected to Raspberry Pi Zero W via USB OTG port, list the device and gain shell access
 
 ```bash
 adb devices
