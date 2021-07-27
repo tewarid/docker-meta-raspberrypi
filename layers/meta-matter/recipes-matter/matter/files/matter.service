@@ -4,7 +4,7 @@ After=bluetooth.target
 Requires=bluetooth.target
 
 [Service]
-ExecStartPre=/bin/sleep 5
+ExecStartPre=/bin/sleep 15
 ExecStart=/usr/bin/chip-all-clusters-app --wifi
 Restart=always
 
