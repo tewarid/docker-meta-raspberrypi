@@ -95,7 +95,7 @@ local_conf_header:
   sshd: |
     EXTRA_IMAGE_FEATURES_append = " ssh-server-dropbear"
   wifi: |
-    IMAGE_INSTALL_append = " hostapd dnsmasq"
+    IMAGE_INSTALL_append = " hostapd dnsmasq iptables"
   python: |
     IMAGE_INSTALL_append = " python3 python3-dbus"
   usb: |
@@ -115,6 +115,6 @@ local_conf_header:
     PREFERRED_PROVIDER_virtual/base-utils = "toybox"
     VIRTUAL-RUNTIME_base-utils-hwclock = "toybox"
     VIRTUAL-RUNTIME_base-utils-syslog = "toybox"
-    IMAGE_INSTALL_append = " dhcpcd"
+    IMAGE_INSTALL_append = " dhcpcd nano"
   matter: |
     IMAGE_INSTALL_append = " matter"
