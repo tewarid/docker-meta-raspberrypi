@@ -143,6 +143,7 @@ do_install() {
 
 FILES_${PN} = " \
     ${bindir}/* \
+    ${systemd_unitdir}/* \
 "
 
 PACKAGE_DEBUG_SPLIT_STYLE = "debug-without-src"
