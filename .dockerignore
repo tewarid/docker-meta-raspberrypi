@@ -1,9 +1,9 @@
-# exclude yocto build artifacts
-build/bitbake-cookerdaemon.log
-build/bitbake.lock
-build/cache/
-# you may cache downloads to the following location after a successful build
-#build/downloads/
-build/sstate-cache/
-build/tmp/
-Dockerfile
+# exclude layers
+layers/*
+# don't exclude our layers
+!layers/meta-berry
+!layers/meta-matter
+# exclude yocto build artifacts on host
+build/*
+# don't exclude download cache
+!build/downloads
