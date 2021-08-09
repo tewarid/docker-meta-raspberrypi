@@ -16,12 +16,10 @@ Slides rendered using Pandoc are available in [HTML reveal.js](presentation/slid
   - Raspberry Pi Zero W (default target)
   - 8 GB Class 10 Micro SD Card
   - Power adapter
-  - Headless
+  - Headless (optional)
     - USB to TTL Serial 3.3V Adapter Cable
-  - Display (optional)
-    - Mini HDMI adapter
-    - HDMI cable
-    - HDMI display
+  - HDMI Display (optional)
+    - HDMI cable and a mini or micro HDMI adapter
     - Micro USB male to USB female adapter
     - USB mouse and keyboard (wireless works)
 
