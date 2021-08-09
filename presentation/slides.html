@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="generator" content="pandoc">
   <meta name="author" content="Devendra Tewari">
-  <meta name="dcterms.date" content="2021-04-26">
+  <meta name="dcterms.date" content="2021-08-09">
   <title>Embedded Linux System using Yocto Project and Docker</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -91,17 +91,16 @@
 <section id="title-slide">
   <h1 class="title">Embedded Linux System using Yocto Project and Docker</h1>
   <p class="author">Devendra Tewari</p>
-  <p class="date">April 26, 2021</p>
+  <p class="date">August 9, 2021</p>
 </section>
 
 <section>
 <section id="embedded-linux-system-with-yocto-project-and-docker" class="title-slide slide level1">
 <h1>Embedded Linux System with Yocto Project and Docker</h1>
-
-</section>
-<section id="objective" class="slide level2">
-<h2>Objective</h2>
-<p>Provide a project template to build an embedded Linux system for the Raspberry Pi using <a href="https://www.yoctoproject.org">Yocto Project</a> and <a href="https://www.docker.com">Docker</a>.</p>
+<p>This project provides a template to build an embedded Linux system for the Raspberry Pi using <a href="https://www.yoctoproject.org">Yocto Project</a> and <a href="https://www.docker.com">Docker</a>.</p>
+<aside class="notes">
+<p>Slides rendered using Pandoc are available in <a href="presentation/slides.html">HTML reveal.js</a> and <a href="presentation/slides.pdf">PDF</a> formats.</p>
+</aside>
 </section>
 <section id="hardware-and-software-requirements" class="slide level2">
 <h2>Hardware and Software Requirements</h2>
@@ -115,15 +114,13 @@
 <li>Raspberry Pi Zero W (default target)</li>
 <li>8 GB Class 10 Micro SD Card</li>
 <li>Power adapter</li>
-<li>Headless
+<li>Headless (optional)
 <ul>
 <li>USB to TTL Serial 3.3V Adapter Cable</li>
 </ul></li>
-<li>Display (optional)
+<li>HDMI Display (optional)
 <ul>
-<li>Mini HDMI adapter</li>
-<li>HDMI cable</li>
-<li>HDMI display</li>
+<li>HDMI cable and a mini or micro HDMI adapter</li>
 <li>Micro USB male to USB female adapter</li>
 <li>USB mouse and keyboard (wireless works)</li>
 </ul></li>
@@ -157,7 +154,7 @@
 <section class="slide level2">
 
 <h4 id="layers-and-recipes">Layers and Recipes</h4>
-<p>The embedded Linux system is built from recipes available in the following layers. A recipe typically builds one software package for the target machine, and its native, native SDK, debug, development, and documentation packages.</p>
+<p>The embedded Linux system is built from recipes available in the following layers. A recipe typically builds one software package for the target machine, and its native, native SDK, debug, development, source, and documentation packages.</p>
 <ul>
 <li>poky - core Yocto Project container layer that provides
 <ul>
@@ -172,6 +169,7 @@
 <li><a href="https://layers.openembedded.org/layerindex/branch/master/layer/meta-networking/">meta-networking</a> - provides dnsmasq</li>
 <li><a href="https://layers.openembedded.org/layerindex/branch/master/layer/meta-python/">meta-python</a></li>
 </ul></li>
+<li><a href="https://github.com/kraj/meta-clang">meta-clang</a> - builds the system with <a href="https://clang.llvm.org">Clang</a> - a LLVM based front-end and back-end for compiling C/C++ that is unencumbered by GPL.</li>
 </ul>
 </section>
 <section class="slide level2">
@@ -180,22 +178,24 @@
 <p>Yocto Project provides no means to download layers, and setup configuration files, for different builds.</p>
 <p><a href="https://github.com/siemens/kas">kas</a> is a build tool for Yocto Project that</p>
 <ul>
-<li>Is configured through a <a href="kas-poky-raspberrypi0-wifi.yml">single file in YAML format</a></li>
+<li>Is configured through YAML or JSON e.g. <a href="kas.yml">kas.yml</a></li>
 <li>Downloads layers - checks out to a specified version, and applies patches</li>
 <li>Generates build directory with
 <ul>
 <li><code>conf/bblayers.conf</code> - list of layers to build</li>
 <li><code>conf/local.conf</code> - MACHINE and DISTRO configuration</li>
 </ul></li>
+<li>Performs multiconfig builds specified via <code>KAS_TARGET</code> environment variable</li>
 </ul>
 </section>
 <section class="slide level2">
 
 <h4 id="learning-resources">Learning Resources</h4>
 <ul>
-<li><a href="https://docs.yoctoproject.org/singleindex.html">Yocto Project Mega Manual</a></li>
 <li><a href="https://www.yoctoproject.org/learn/presentation-videos/">Yocto Project Presentation Videos</a></li>
 <li><a href="https://webthesis.biblio.polito.it/9085/1/tesi.pdf">Alessandro Flaminio’s Master Thesis</a></li>
+<li><a href="https://docs.yoctoproject.org/singleindex.html">Yocto Project Mega Manual</a></li>
+<li><a href="https://docs.yoctoproject.org/bitbake/singleindex.html">BitBake User Manual</a></li>
 </ul>
 </section>
 <section id="build-instructions" class="slide level2">
@@ -204,16 +204,34 @@
 </section>
 <section class="slide level2">
 
-<h3 id="build-using-docker">Build using Docker</h3>
-<p>Clone the project repo and run</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="fu">git</span> clone https://github.com/tewarid/berry</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a><span class="bu">cd</span> berry</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a><span class="ex">docker</span> build -t berry:latest .</span></code></pre></div>
+<h3 id="prepare-a-docker-container-for-build">Prepare a Docker container for build</h3>
+<p>Create a Docker container</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="ex">docker</span> run -it --name berrydev crops/yocto:ubuntu-20.04-base</span></code></pre></div>
+<p>Open a privileged shell to install kas</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="ex">docker</span> exec -it -u 0 berrydev /bin/bash</span></code></pre></div>
+<p>Install kas</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="ex">apt</span> install python3-pip</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a><span class="ex">pip3</span> install kas</span></code></pre></div>
+</section>
+<section class="slide level2">
+
+<h3 id="build-on-a-linux-host-or-docker-container">Build on a Linux host or Docker container</h3>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="fu">git</span> clone https://github.com/tewarid/berry</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a><span class="bu">cd</span> berry</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a><span class="ex">kas</span> build kas.yml</span></code></pre></div>
+</section>
+<section class="slide level2">
+
+<h3 id="build-using-docker-build">Build using Docker Build</h3>
+<p>Clone the project repo on host and run</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a><span class="fu">git</span> clone https://github.com/tewarid/berry</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a><span class="bu">cd</span> berry</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a><span class="ex">docker</span> build -t berry:latest .</span></code></pre></div>
 </section>
 <section class="slide level2">
 
 <h3 id="pick-a-different-raspberry-pi">Pick a different Raspberry Pi</h3>
-<p>By default, the image is built for Raspberry Pi Zero Wi-Fi. Edit <code>machine</code> in <code>kas-poky-raspberrypi0-wifi.yml</code> to build for a different model</p>
+<p>By default, the image is built for Raspberry Pi Zero Wi-Fi. Edit <code>machine</code> in <code>kas.yml</code> to build for a different model</p>
 <table>
 <thead>
 <tr class="header">
@@ -267,18 +285,29 @@
 </section>
 <section class="slide level2">
 
+<h3 id="multiconfig-build">Multiconfig build</h3>
+<p>A multiconfig build can generate images for multiple targets in one build</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a><span class="bu">export</span> <span class="va">KAS_TARGET=</span><span class="st">&quot;mc:berry-raspberrypi0-wifi:core-image-base mc:berry-raspberrypi3:core-image-base mc:berry-raspberrypi4:core-image-base&quot;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a><span class="ex">./scripts/build.sh</span></span></code></pre></div>
+<p>Note that multiconfig builds may fail due to memory exhaustion when multiple memory intensive tasks such as LLVM build are run at the same time. The builds also require more storage due to usage of different <code>TMPDIR</code> for each target. Specify fewer targets in <code>KAS_TARGET</code> if your build environment is low on resources.</p>
+<p>Additional targets can be created under <a href="layers/meta-berry/conf/multiconfig"><code>layers/meta-berry/conf/multiconfig</code></a>.</p>
+</section>
+<section class="slide level2">
+
 <h3 id="access-private-git-repos-in-build">Access private Git repos in build</h3>
+<p><em>If you have encrypted your home folder using ecryptfs, you cannot use the procedure below.</em></p>
 <p>Run ssh-agent on host and add default <code>~/.ssh/id_rsa</code> key</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="bu">export</span> <span class="va">SSH_AUTH_SOCK=</span>~/.ssh/ssh-auth.sock</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a><span class="fu">ssh-agent</span> -a <span class="va">$SSH_AUTH_SOCK</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a><span class="fu">ssh-add</span> ~/.ssh/id_rsa</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a><span class="fu">ssh-add</span> -l</span></code></pre></div>
-<p>The last command in the sequence above should list the key you added.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a><span class="bu">export</span> <span class="va">SSH_AUTH_SOCK=</span>~/.ssh/ssh-auth.sock</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true"></a><span class="fu">ssh-agent</span> -a <span class="va">$SSH_AUTH_SOCK</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true"></a><span class="fu">ssh-add</span> ~/.ssh/id_rsa</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true"></a><span class="fu">ssh-add</span> -l</span></code></pre></div>
+<p>Edit <a href="Dockerfile">Dockerfile</a> and add <code>--mount=type=ssh,mode=777</code> to build</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode dockerfile"><code class="sourceCode dockerfile"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true"></a><span class="kw">RUN</span> --mount=type=ssh,mode=777 kas build kas.yml</span></code></pre></div>
 <p>Build with <a href="https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/syntax.md">BuildKit or <code>docker buildx</code></a></p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="bu">export</span> <span class="va">DOCKER_BUILDKIT=</span>1</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a><span class="ex">docker</span> build <span class="kw">\</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a>  <span class="ex">--ssh</span> default=<span class="va">$SSH_AUTH_SOCK</span> <span class="kw">\</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true"></a>  <span class="ex">-t</span> berry:latest .</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true"></a><span class="bu">export</span> <span class="va">DOCKER_BUILDKIT=</span>1</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true"></a><span class="ex">docker</span> build <span class="kw">\</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true"></a>  <span class="ex">--ssh</span> default=<span class="va">$SSH_AUTH_SOCK</span> <span class="kw">\</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true"></a>  <span class="ex">-t</span> berry:latest .</span></code></pre></div>
 </section>
 <section id="incremental-development" class="slide level2">
 <h2>Incremental development</h2>
@@ -288,90 +317,91 @@
 
 <h3 id="create-a-container">Create a container</h3>
 <p>Create a container called <code>berrydev</code> for incremental development</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="ex">docker</span> run --name berrydev -it berry:latest</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true"></a><span class="ex">docker</span> run --name berrydev -it berry:latest</span></code></pre></div>
 <p>Start a stopped container</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a><span class="ex">docker</span> start -ai berrydev</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true"></a><span class="ex">docker</span> start -ai berrydev</span></code></pre></div>
 <p>See whether the container is running or stopped</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a><span class="ex">docker</span> ps -a</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true"></a><span class="ex">docker</span> ps -a</span></code></pre></div>
 </section>
 <section class="slide level2">
 
 <h3 id="run-incremental-build">Run incremental build</h3>
 <p>Make the necessary changes to source code and rebuild</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a><span class="ex">kas</span> build kas-poky-raspberrypi0-wifi.yml</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true"></a><span class="ex">kas</span> build kas.yml</span></code></pre></div>
 <p>Note that BitBake may fail with <a href="https://github.com/tewarid/berry/issues/1">Invalid cross-device link error</a>. Follow the link for additional information and a patch.</p>
 </section>
 <section class="slide level2">
 
 <h4 id="access-private-git-repos-in-container">Access private Git repos in container</h4>
+<p><em>If you have encrypted your home folder using ecryptfs, you cannot use the procedure below.</em></p>
 <p>Create Docker container with access to <a href="#/access-private-git-repos-in-build">ssh-agent on host</a></p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true"></a><span class="bu">export</span> <span class="va">SSH_AUTH_SOCK=</span>~/.ssh/ssh-auth.sock</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true"></a><span class="ex">docker</span> run --name berrydev -it <span class="kw">\</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true"></a>  <span class="ex">-v</span> <span class="va">$SSH_AUTH_SOCK</span>:/run/host-services/ssh-auth.sock <span class="kw">\</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true"></a>  <span class="ex">-e</span> SSH_AUTH_SOCK=<span class="st">&quot;/run/host-services/ssh-auth.sock&quot;</span> <span class="kw">\</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true"></a>  <span class="ex">berry</span>:latest</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true"></a><span class="bu">export</span> <span class="va">SSH_AUTH_SOCK=</span>~/.ssh/ssh-auth.sock</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true"></a><span class="ex">docker</span> run --name berrydev -it <span class="kw">\</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true"></a>  <span class="ex">-v</span> <span class="va">$SSH_AUTH_SOCK</span>:/run/host-services/ssh-auth.sock <span class="kw">\</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true"></a>  <span class="ex">-e</span> SSH_AUTH_SOCK=<span class="st">&quot;/run/host-services/ssh-auth.sock&quot;</span> <span class="kw">\</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true"></a>  <span class="ex">berry</span>:latest</span></code></pre></div>
 </section>
 <section class="slide level2">
 
 <h5 id="enable-non-root-access-to-ssh-agent">Enable non-root access to ssh-agent</h5>
 <p>Since we’re using a non-root user, you may get an access denied message when you run</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true"></a><span class="co"># Access your Git server instead of example.com</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true"></a><span class="fu">ssh</span> git@example.com</span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true"></a><span class="co"># Access your Git server instead of example.com</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true"></a><span class="fu">ssh</span> git@example.com</span></code></pre></div>
 <p>If so, you will need to fix access to ssh-agent socket at least once</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true"></a><span class="ex">docker</span> exec -u 0 -it berrydev /bin/bash</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true"></a><span class="fu">chmod</span> 777 /run/host-services/ssh-auth.sock</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true"></a><span class="ex">docker</span> exec -u 0 -it berrydev /bin/bash</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true"></a><span class="fu">chmod</span> 777 /run/host-services/ssh-auth.sock</span></code></pre></div>
 </section>
 <section class="slide level2">
 
 <h3 id="download-cache">Download cache</h3>
 <p>A download cache can be setup under <code>build/downloads</code>. It will be copied into the image along with the source code. This can reduce build times significantly.</p>
 <p>To copy download folder from a container to the host</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true"></a><span class="ex">docker</span> cp <span class="kw">\</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true"></a>  <span class="ex">berrydev</span>:/home/yoctouser/berry/build/downloads <span class="kw">\</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true"></a>  <span class="ex">build/</span></span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true"></a><span class="ex">docker</span> cp <span class="kw">\</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true"></a>  <span class="ex">berrydev</span>:/home/yoctouser/berry/build/downloads <span class="kw">\</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true"></a>  <span class="ex">build/</span></span></code></pre></div>
 </section>
 <section class="slide level2">
 
 <h3 id="working-with-bitbake">Working with BitBake</h3>
 <p>Setup build environment in a container to gain access to BitBake</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true"></a><span class="bu">source</span> layers/poky/oe-init-build-env</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true"></a><span class="co"># this will leave you in the build directory</span></span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true"></a><span class="bu">source</span> layers/poky/oe-init-build-env</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true"></a><span class="co"># this will leave you in the build directory</span></span></code></pre></div>
 <p>Run incremental build using BitBake in the build directory</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true"></a><span class="ex">bitbake</span> core-image-base</span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true"></a><span class="ex">bitbake</span> core-image-base</span></code></pre></div>
 </section>
 <section class="slide level2">
 
 <h4 id="clean-a-recipe">Clean a recipe</h4>
 <p>You can clean state of any recipe to build it from scratch</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true"></a><span class="ex">bitbake</span> recipe_name -c cleansstate</span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true"></a><span class="ex">bitbake</span> recipe_name -c cleansstate</span></code></pre></div>
 <p><code>cleanall</code> also cleans the download cache for the recipe.</p>
 </section>
 <section class="slide level2">
 
 <h4 id="run-devshell">Run devshell</h4>
 <p>devshell enables you to work in a recipe’s build environment</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true"></a><span class="ex">bitbake</span> recipe_name -c devshell</span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true"></a><span class="ex">bitbake</span> recipe_name -c devshell</span></code></pre></div>
 <p>Use <code>exit</code> to close devshell.</p>
 </section>
 <section class="slide level2">
 
 <h4 id="generate-sdk-or-esdk">Generate SDK or eSDK</h4>
-<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true"></a><span class="ex">bitbake</span> core-image-base -c populate_sdk</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true"></a><span class="co"># OR</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true"></a><span class="ex">bitbake</span> core-image-base -c populate_sdk_ext</span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true"></a><span class="ex">bitbake</span> core-image-base -c populate_sdk</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true"></a><span class="co"># OR</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true"></a><span class="ex">bitbake</span> core-image-base -c populate_sdk_ext</span></code></pre></div>
 <p>SDK should be located at <code>tmp/deploy/sdk</code> under build directory.</p>
 </section>
 <section class="slide level2">
 
 <h4 id="working-with-the-kernel">Working with the kernel</h4>
 <p>To clean kernel build</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true"></a><span class="ex">bitbake</span> virtual/kernel -c clean</span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true"></a><span class="ex">bitbake</span> virtual/kernel -c clean</span></code></pre></div>
 <p>To change kernel config and produce a diff</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true"></a><span class="ex">bitbake</span> virtual/kernel -c menuconfig</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true"></a><span class="co"># using menuconfig to change kernel config here</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true"></a><span class="ex">bitbake</span> virtual/kernel -c diffconfig</span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true"></a><span class="ex">bitbake</span> virtual/kernel -c menuconfig</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true"></a><span class="co"># using menuconfig to change kernel config here</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true"></a><span class="ex">bitbake</span> virtual/kernel -c diffconfig</span></code></pre></div>
 <p>To build kernel</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true"></a><span class="ex">bitbake</span> virtual/kernel</span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true"></a><span class="ex">bitbake</span> virtual/kernel</span></code></pre></div>
 </section>
 <section id="write-image-to-sd-card" class="slide level2">
 <h2>Write image to SD card</h2>
@@ -381,40 +411,40 @@
 
 <h3 id="copy-image-file-to-host">Copy image file to host</h3>
 <p>To copy image files from the Docker container to host, use <a href="https://docs.docker.com/engine/reference/commandline/cp/">docker cp</a></p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true"></a><span class="ex">docker</span> cp <span class="kw">\</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true"></a>  <span class="ex">berrydev</span>:/home/yoctouser/berry/build/tmp/deploy/images/raspberrypi/core-image-base-raspberrypi-20210226153757.rootfs.wic.bmap <span class="kw">\</span></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true"></a>  <span class="ex">build/tmp/deploy/images/raspberrypi/</span></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true"></a><span class="ex">docker</span> cp <span class="kw">\</span></span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true"></a>  <span class="ex">berrydev</span>:/home/yoctouser/berry/build/tmp/deploy/images/raspberrypi/core-image-base-raspberrypi-20210226153757.rootfs.wic.bz2 <span class="kw">\</span></span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true"></a>  <span class="ex">build/tmp/deploy/images/raspberrypi/</span></span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true"></a><span class="ex">docker</span> cp <span class="kw">\</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true"></a>  <span class="ex">berrydev</span>:/home/yoctouser/berry/build/tmp/deploy/images/raspberrypi/core-image-base-raspberrypi-20210226153757.rootfs.wic.bmap <span class="kw">\</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true"></a>  <span class="ex">build/tmp/deploy/images/raspberrypi/</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true"></a><span class="ex">docker</span> cp <span class="kw">\</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true"></a>  <span class="ex">berrydev</span>:/home/yoctouser/berry/build/tmp/deploy/images/raspberrypi/core-image-base-raspberrypi-20210226153757.rootfs.wic.bz2 <span class="kw">\</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true"></a>  <span class="ex">build/tmp/deploy/images/raspberrypi/</span></span></code></pre></div>
 <p>To write image to a SD card, use <a href="https://github.com/intel/bmap-tools">bmaptool</a>.</p>
 </section>
 <section class="slide level2">
 
 <h3 id="install-and-use-bmaptool-on-ubuntu">Install and use bmaptool on Ubuntu</h3>
-<div class="sourceCode" id="cb21"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true"></a><span class="fu">sudo</span> apt install bmap-tools</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true"></a><span class="fu">sudo</span> apt install bmap-tools</span></code></pre></div>
 <p>Use <code>lsblk</code> to find SD card device, unmount boot and root partitions, if mounted, and write image to SD card</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true"></a><span class="ex">lsblk</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true"></a><span class="fu">sudo</span> umount /dev/mmcblk0p1</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true"></a><span class="fu">sudo</span> umount /dev/mmcblk0p2</span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true"></a><span class="fu">sudo</span> bmaptool copy <span class="kw">\</span></span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true"></a>  <span class="ex">--bmap</span> build/tmp/deploy/images/raspberrypi0-wifi/core-image-base-raspberrypi-20210226153757.rootfs.wic.bmap <span class="kw">\</span></span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true"></a>  <span class="ex">build/tmp/deploy/images/raspberrypi0-wifi/core-image-base-raspberrypi-20210226153757.rootfs.wic.bz2</span> <span class="kw">\</span></span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true"></a>  <span class="ex">/dev/mmcblk0</span></span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true"></a><span class="ex">lsblk</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true"></a><span class="fu">sudo</span> umount /dev/mmcblk0p1</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true"></a><span class="fu">sudo</span> umount /dev/mmcblk0p2</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true"></a><span class="fu">sudo</span> bmaptool copy <span class="kw">\</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true"></a>  <span class="ex">--bmap</span> build/tmp/deploy/images/raspberrypi0-wifi/core-image-base-raspberrypi-20210226153757.rootfs.wic.bmap <span class="kw">\</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true"></a>  <span class="ex">build/tmp/deploy/images/raspberrypi0-wifi/core-image-base-raspberrypi-20210226153757.rootfs.wic.bz2</span> <span class="kw">\</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true"></a>  <span class="ex">/dev/mmcblk0</span></span></code></pre></div>
 </section>
 <section class="slide level2">
 
 <h3 id="install-and-use-bmaptool-on-macos">Install and use bmaptool on macOS</h3>
-<div class="sourceCode" id="cb23"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true"></a><span class="fu">git</span> clone https://github.com/intel/bmap-tools.git</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true"></a><span class="bu">cd</span> bmap-tools</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true"></a><span class="ex">python3</span> setup.py install</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true"></a><span class="ex">pip3</span> install six</span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true"></a><span class="fu">git</span> clone https://github.com/intel/bmap-tools.git</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true"></a><span class="bu">cd</span> bmap-tools</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true"></a><span class="ex">python3</span> setup.py install</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true"></a><span class="ex">pip3</span> install six</span></code></pre></div>
 <p>Find SD card device using <code>diskutil list</code>, then unmount disk, and write image to SD card</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true"></a><span class="ex">diskutil</span> unmountDisk /dev/disk2</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true"></a><span class="fu">sudo</span> bmaptool copy <span class="kw">\</span></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true"></a>  <span class="ex">--bmap</span> build/tmp/deploy/images/raspberrypi0-wifi/core-image-base-raspberrypi-20210226153757.rootfs.wic.bmap <span class="kw">\</span></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true"></a>  <span class="ex">build/tmp/deploy/images/raspberrypi0-wifi/core-image-base-raspberrypi-20210226153757.rootfs.wic.bz2</span> <span class="kw">\</span></span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true"></a>  <span class="ex">/dev/rdisk2</span></span></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true"></a><span class="ex">diskutil</span> unmountDisk /dev/disk2</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true"></a><span class="fu">sudo</span> bmaptool copy <span class="kw">\</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true"></a>  <span class="ex">--bmap</span> build/tmp/deploy/images/raspberrypi0-wifi/core-image-base-raspberrypi-20210226153757.rootfs.wic.bmap <span class="kw">\</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true"></a>  <span class="ex">build/tmp/deploy/images/raspberrypi0-wifi/core-image-base-raspberrypi-20210226153757.rootfs.wic.bz2</span> <span class="kw">\</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true"></a>  <span class="ex">/dev/rdisk2</span></span></code></pre></div>
 <p>Note the <code>r</code> in device path i.e. <code>/dev/rdisk2</code> in bmaptool command.</p>
 </section>
 <section id="login-shell" class="slide level2">
@@ -423,62 +453,93 @@
 </section>
 <section class="slide level2">
 
-<h3 id="enable-serial-console">Enable serial console</h3>
-<p>To use device without an HDMI display i.e. headless, enable <a href="https://www.raspberrypi.org/documentation/configuration/uart.md">serial console through expansion headers</a>.</p>
-<p>Navigate to DOS boot partition of SD Card on host machine.</p>
-<p>Add <code>console=ttyS0,115200</code> to kernel command line in file <code>cmdline.txt</code></p>
-<pre class="text"><code>dwc_otg.lpm_enable=0 root=/dev/mmcblk0p2 rootfstype=ext4
- console=ttyS0,115200 console=tty1 rootwait</code></pre>
-<p>At the end of <code>config.txt</code> file, add</p>
-<pre class="conf"><code>enable_uart=1</code></pre>
+<h3 id="serial-console">Serial console</h3>
+<p>To log in to device without an HDMI display, use a <a href="https://www.adafruit.com/product/954">USB to TTL Serial 3.3V cable</a> connected to the expansion header.</p>
+<p>To disable serial console, comment out the following section in <code>kas.yml</code></p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true"></a><span class="fu">  console</span><span class="kw">: </span><span class="ch">|</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true"></a>    ENABLE_UART = &quot;1&quot;</span></code></pre></div>
+</section>
+<section class="slide level2">
+
+<h3 id="enable-adb-daemon">Enable ADB daemon</h3>
+<p>ADB daemon is enabled by default. To disable USB debugging at build time, remove <code>USB_DEBUGGING_ENABLED</code> or set to “0”.</p>
+<p>Subsequently, to enable <a href="https://developer.android.com/studio/command-line/adb">ADB daemon</a> on the device</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true"></a><span class="fu">touch</span> /var/usb-debugging-enabled</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true"></a><span class="ex">reboot</span></span></code></pre></div>
+<p>On a host machine connected to Raspberry Pi Zero W via USB OTG port, list the device and gain shell access</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true"></a><span class="ex">adb</span> devices</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true"></a><span class="ex">adb</span> shell</span></code></pre></div>
 </section>
 <section class="slide level2">
 
 <h3 id="configure-audio">Configure audio</h3>
-<p><code>alsa-utils</code> package is built into the image. You can disable it by removing the <code>audio</code> section in kas configuration.</p>
+<p><code>alsa-utils</code> package is built into the image. You can disable it by removing the <code>audio</code> section in <code>kas.yml</code>.</p>
 <p>To see a list of device names</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true"></a><span class="fu">aplay</span> -L</span></code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true"></a><span class="fu">aplay</span> -L</span></code></pre></div>
 <p>To play test sound to HDMI display</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true"></a><span class="ex">speaker-test</span> -c2 iec958</span></code></pre></div>
-<p>Use <code>alsamixer</code> and <code>amixer</code> to change audio settings</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true"></a><span class="ex">speaker-test</span> -c2 iec958</span></code></pre></div>
+<p>Use <code>alsamixer</code> and <code>amixer</code> to change audio settings.</p>
+</section>
+<section class="slide level2">
+
+<h4 id="wm8960-soundcard-support">WM8960 soundcard support</h4>
+<p>Support is enabled for <a href="https://wiki.seeedstudio.com/ReSpeaker_2_Mics_Pi_HAT/">ReSpeaker 2-Mic Pi Hat</a> and similar hats.</p>
+<p>You need to adjust volume and toggle some switches that are off by default</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true"></a><span class="ex">amixer</span> -c1 sset <span class="st">&#39;Headphone&#39;</span>,0 80%,80%</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true"></a><span class="ex">amixer</span> -c1 sset <span class="st">&#39;Speaker&#39;</span>,0 80%,80%</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true"></a><span class="ex">amixer</span> -c1 sset <span class="st">&#39;Left Input Mixer Boost&#39;</span> toggle</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true"></a><span class="ex">amixer</span> -c1 sset <span class="st">&#39;Left Output Mixer PCM&#39;</span> toggle</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true"></a><span class="ex">amixer</span> -c1 sset <span class="st">&#39;Right Input Mixer Boost&#39;</span> toggle</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true"></a><span class="ex">amixer</span> -c1 sset <span class="st">&#39;Right Output Mixer PCM&#39;</span> toggle</span></code></pre></div>
+<p>The following should output white noise</p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true"></a><span class="ex">speaker-test</span> -c2 -Dhw:1</span></code></pre></div>
+<p>The following should loop mic input to speaker</p>
+<div class="sourceCode" id="cb38"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true"></a><span class="fu">arecord</span> -f cd -Dhw:1 <span class="kw">|</span> <span class="fu">aplay</span> -Dhw:1</span></code></pre></div>
+<p>Note that <a href="https://github.com/raspberrypi/linux/issues/4384">audio capture on a ReSpeaker 2-Mic Pi Hat is very noisy</a>.</p>
 </section>
 <section class="slide level2">
 
 <h3 id="configure-wi-fi">Configure Wi-Fi</h3>
 <p>Use <code>wpa_passphrase</code> utility to print out network configuration</p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true"></a><span class="ex">wpa_passphrase</span> ssid password</span></code></pre></div>
+<div class="sourceCode" id="cb39"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true"></a><span class="ex">wpa_passphrase</span> ssid password</span></code></pre></div>
 <p>Copy the output and add, all but the commented out plain text password line, to end of <code>/etc/wpa_supplicant.conf</code>.</p>
-<p>Bring up the Wi-Fi network</p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true"></a><span class="ex">ifup</span> wlan0</span></code></pre></div>
-<p>With the board on the network, you can access it using ssh from the host.</p>
+<p>Restart wpa_supplicant service</p>
+<div class="sourceCode" id="cb40"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true"></a><span class="ex">systemctl</span> restart wpa_supplicant</span></code></pre></div>
+<p>With the board on the network, you can access it using ssh from a host.</p>
 </section>
 <section class="slide level2">
 
 <h3 id="configure-software-access-point">Configure Software Access Point</h3>
-<p>If you want to configure Raspberry Pi as a software access point (SoftAP/hotspot) and access it via ssh, follow the instructions at <a href="https://www.raspberrypi.org/documentation/configuration/wireless/access-point-routed.md">Setting up a Raspberry Pi as a routed wireless access point</a>, and</p>
-<ol type="1">
-<li>Don’t use sudo</li>
-<li>Don’t configure dhcpcd or iptables</li>
-<li>Use vi to edit <code>/etc/dnsmasq.conf</code> and <code>/etc/hostapd.conf</code></li>
-<li>Reboot system using <code>reboot</code></li>
-<li>Assign static IP address to interface <code>wlan0</code> - <code>ifconfig wlan0 up 192.168.4.1 netmask 255.255.255.0</code></li>
-<li>Start hostapd service manually - <code>systemctl start hostapd</code></li>
-</ol>
+<p>If you want to configure Raspberry Pi as a software access point (SoftAP/hotspot) and access it via ssh, follow the instructions at <a href="https://www.raspberrypi.org/documentation/configuration/wireless/access-point-routed.md">Setting up a Raspberry Pi as a routed wireless access point</a>.</p>
 </section>
 <section class="slide level2">
 
 <h3 id="configure-bluetooth">Configure Bluetooth</h3>
 <p>Bring up interface and make device discoverable</p>
-<div class="sourceCode" id="cb31"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true"></a><span class="ex">hciconfig</span> hci0 up</span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true"></a><span class="ex">hciconfig</span> hci0 piscan</span></code></pre></div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true"></a><span class="ex">hciconfig</span> hci0 up</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true"></a><span class="ex">hciconfig</span> hci0 piscan</span></code></pre></div>
 <p>DBUS can also used to bring up interface programmatically</p>
-<div class="sourceCode" id="cb32"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true"></a><span class="ex">dbus-send</span> --system --print-reply <span class="kw">\</span></span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true"></a>  <span class="ex">--dest</span>=org.bluez <span class="kw">\</span></span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true"></a>  <span class="ex">/org/bluez/hci0</span> <span class="kw">\</span></span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true"></a>  <span class="ex">org.freedesktop.DBus.Properties.Set</span> <span class="kw">\</span></span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true"></a>  <span class="ex">string</span>:<span class="st">&quot;org.bluez.Adapter1&quot;</span> <span class="kw">\</span></span>
-<span id="cb32-6"><a href="#cb32-6" aria-hidden="true"></a>  <span class="ex">string</span>:<span class="st">&quot;Powered&quot;</span> <span class="kw">\</span></span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true"></a>  <span class="ex">variant</span>:boolean:true</span></code></pre></div>
+<div class="sourceCode" id="cb42"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true"></a><span class="ex">dbus-send</span> --system --print-reply <span class="kw">\</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true"></a>  <span class="ex">--dest</span>=org.bluez <span class="kw">\</span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true"></a>  <span class="ex">/org/bluez/hci0</span> <span class="kw">\</span></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true"></a>  <span class="ex">org.freedesktop.DBus.Properties.Set</span> <span class="kw">\</span></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true"></a>  <span class="ex">string</span>:<span class="st">&quot;org.bluez.Adapter1&quot;</span> <span class="kw">\</span></span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true"></a>  <span class="ex">string</span>:<span class="st">&quot;Powered&quot;</span> <span class="kw">\</span></span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true"></a>  <span class="ex">variant</span>:boolean:true</span></code></pre></div>
+</section>
+<section id="matter" class="slide level2">
+<h2>Matter</h2>
+<p><a href="https://buildwithmatter.com">Matter</a> is a connectivity standard and implementation for home devices. The <a href="layers/meta-matter">meta-matter</a> layer builds and installs the <code>chip-all-clusters-app</code> in the device image.</p>
+</section>
+<section class="slide level2">
+
+<h3 id="wi-fi-provisioning">Wi-Fi provisioning</h3>
+<p>Provision Wi-Fi network using <code>chip-tool</code> over Bluetooth LE</p>
+<div class="sourceCode" id="cb43"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true"></a><span class="ex">chip-tool</span> pairing ble-wifi ssid <span class="st">&quot;password&quot;</span> 0 20202021 3840</span></code></pre></div>
+<p>To toggle onoff switch at endpoint 1</p>
+<div class="sourceCode" id="cb44"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true"></a><span class="ex">chip-tool</span> onoff toggle 1</span></code></pre></div>
+<p>Clear storage and start over</p>
+<div class="sourceCode" id="cb45"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true"></a><span class="fu">rm</span> /tmp/chip_*</span></code></pre></div>
 </section></section>
     </div>
   </div>
