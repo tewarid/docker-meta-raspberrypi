@@ -8,12 +8,12 @@ target:
 
 repos:
   meta-raspberry:
-    url: http://git.yoctoproject.org/git/meta-raspberrypi
+    url: https://git.yoctoproject.org/git/meta-raspberrypi
     path: layers/meta-raspberrypi
     refspec: hardknott
 
   poky:
-    url: http://git.yoctoproject.org/git/poky
+    url: https://git.yoctoproject.org/git/poky
     path: layers/poky
     refspec: hardknott-3.3.1
     layers:
@@ -29,7 +29,7 @@ repos:
         path: ../../patches/0001-use-disable-privsep-with-dhcpcd.patch
 
   meta-openembedded:
-    url: git://git.openembedded.org/meta-openembedded
+    url: https://git.openembedded.org/meta-openembedded
     path: layers/meta-openembedded
     refspec: hardknott
     layers:
