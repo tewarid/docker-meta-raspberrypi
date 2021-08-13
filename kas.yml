@@ -13,20 +13,13 @@ repos:
     refspec: hardknott
 
   poky:
-    url: https://git.yoctoproject.org/git/poky
+    url: https://github.com/tewarid/poky.git
     path: layers/poky
     refspec: hardknott-3.3.1
     layers:
       meta:
       meta-poky:
       meta-yocto-bsp:
-    patches:
-      use-bb.utils.rename-to-rename-file-or-directory:
-        repo: poky
-        path: ../../patches/0001-use-bb.utils.rename-to-rename-file-or-directory.patch
-      use-disable-privsep-with-dhcpcd:
-        repo: poky
-        path: ../../patches/0001-use-disable-privsep-with-dhcpcd.patch
 
   meta-openembedded:
     url: https://git.openembedded.org/meta-openembedded
