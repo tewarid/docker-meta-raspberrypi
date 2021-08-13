@@ -8,7 +8,7 @@ target:
 
 repos:
   meta-raspberrypi:
-    url: https://git.yoctoproject.org/git/meta-raspberrypi
+    url: https://github.com/tewarid/meta-raspberrypi.git
     path: layers/meta-raspberrypi
     refspec: hardknott
 
