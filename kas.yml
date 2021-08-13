@@ -15,7 +15,7 @@ repos:
   poky:
     url: https://github.com/tewarid/poky.git
     path: layers/poky
-    refspec: hardknott-3.3.2
+    refspec: hardknott
     layers:
       meta:
       meta-poky:
