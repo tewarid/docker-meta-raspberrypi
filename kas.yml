@@ -7,7 +7,7 @@ target:
   - core-image-base
 
 repos:
-  meta-raspberry:
+  meta-raspberrypi:
     url: https://git.yoctoproject.org/git/meta-raspberrypi
     path: layers/meta-raspberrypi
     refspec: hardknott
