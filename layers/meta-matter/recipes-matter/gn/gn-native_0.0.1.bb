@@ -34,4 +34,4 @@ do_install() {
     install -D -m 0755  ${S}/out/gn ${D}${bindir}/gn
 }
 
-INSANE_SKIP_${PN} += "already-stripped"
+INSANE_SKIP:${PN} += "already-stripped"

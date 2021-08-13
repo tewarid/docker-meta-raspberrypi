@@ -11,7 +11,7 @@ S = "${WORKDIR}/git"
 
 # Only clang is supported for now.
 TOOLCHAIN = "clang"
-TOOLCHAIN_class-native = "clang"
+TOOLCHAIN:class-native = "clang"
 
 # This makes the target build use libc++ and compiler_rt instead of the GNU
 # runtime. The native binaries compiled and run as part of the build still use
@@ -45,22 +45,22 @@ DEPENDS += " \
 
 # Enable systemd service
 inherit systemd
-SYSTEMD_SERVICE_${PN} = "matter.service"
+SYSTEMD_SERVICE:${PN} = "matter.service"
 SYSTEMD_AUTO_ENABLE = "enable"
 
 COMPATIBLE_MACHINE = "(-)"
-COMPATIBLE_MACHINE_aarch64 = "(.*)"
-COMPATIBLE_MACHINE_armv6 = "(.*)"
-COMPATIBLE_MACHINE_armv7a = "(.*)"
-COMPATIBLE_MACHINE_armv7ve = "(.*)"
-COMPATIBLE_MACHINE_x86 = "(.*)"
-COMPATIBLE_MACHINE_x86-64 = "(.*)"
+COMPATIBLE_MACHINE:aarch64 = "(.*)"
+COMPATIBLE_MACHINE:armv6 = "(.*)"
+COMPATIBLE_MACHINE:armv7a = "(.*)"
+COMPATIBLE_MACHINE:armv7ve = "(.*)"
+COMPATIBLE_MACHINE:x86 = "(.*)"
+COMPATIBLE_MACHINE:x86-64 = "(.*)"
 
 # Also build the parts that are run on the host with clang.
-BUILD_AR_toolchain-clang = "llvm-ar"
-BUILD_CC_toolchain-clang = "clang"
-BUILD_CXX_toolchain-clang = "clang++"
-BUILD_LD_toolchain-clang = "clang"
+BUILD_AR:toolchain-clang = "llvm-ar"
+BUILD_CC:toolchain-clang = "clang"
+BUILD_CXX:toolchain-clang = "clang++"
+BUILD_LD:toolchain-clang = "clang"
 
 # Make sure pkg-config, when used with the host's toolchain to build the
 # binaries we need to run on the host, uses the right pkg-config to avoid
@@ -99,17 +99,17 @@ def get_compiler_flag(params, param_name, d):
 ARM_FLOAT_ABI = "${@bb.utils.contains('TUNE_FEATURES', 'callconvention-hard', 'hard', 'softfp', d)}"
 ARM_FPU = "${@get_compiler_flag(d.getVar('TUNE_CCARGS').split(), '-mfpu', d)}"
 ARM_TUNE = "${@get_compiler_flag(d.getVar('TUNE_CCARGS').split(), '-mcpu', d)}"
-ARM_VERSION_aarch64 = "8"
-ARM_VERSION_armv7a = "7"
-ARM_VERSION_armv7ve = "7"
-ARM_VERSION_armv6 = "6"
+ARM_VERSION:aarch64 = "8"
+ARM_VERSION:armv7a = "7"
+ARM_VERSION:armv7ve = "7"
+ARM_VERSION:armv6 = "6"
 
 # GN computes and defaults to it automatically where needed
 # forcing it from cmdline breaks build on places where it ends up
 # overriding what GN wants
-TUNE_CCARGS_remove = "-mthumb"
+TUNE_CCARGS:remove = "-mthumb"
 
-GN_ARGS_append_arm = ' \
+GN_ARGS:append:arm = ' \
     arm_float_abi="${ARM_FLOAT_ABI}" \
     arm_fpu="${ARM_FPU}" \
     arm_tune="${ARM_TUNE}" \
@@ -141,7 +141,7 @@ do_install() {
     install -m 0644 ${WORKDIR}/matter.service ${D}${systemd_unitdir}/system
 }
 
-FILES_${PN} = " \
+FILES:${PN} = " \
     ${bindir}/* \
     ${systemd_unitdir}/* \
 "
@@ -149,4 +149,4 @@ FILES_${PN} = " \
 PACKAGE_DEBUG_SPLIT_STYLE = "debug-without-src"
 
 # There is no need to ship empty -dev packages.
-ALLOW_EMPTY_${PN}-dev = "0"
+ALLOW_EMPTY:${PN}-dev = "0"

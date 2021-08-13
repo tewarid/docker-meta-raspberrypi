@@ -10,12 +10,12 @@ repos:
   meta-raspberrypi:
     url: https://github.com/tewarid/meta-raspberrypi.git
     path: layers/meta-raspberrypi
-    refspec: hardknott
+    refspec: master
 
   poky:
     url: https://github.com/tewarid/poky.git
     path: layers/poky
-    refspec: hardknott
+    refspec: master
     layers:
       meta:
       meta-poky:
@@ -24,7 +24,7 @@ repos:
   meta-openembedded:
     url: https://github.com/tewarid/meta-openembedded.git
     path: layers/meta-openembedded
-    refspec: hardknott
+    refspec: master
     layers:
       meta-oe:
       meta-python:
@@ -33,7 +33,7 @@ repos:
   meta-clang:
     url: https://github.com/kraj/meta-clang.git
     path: layers/meta-clang
-    refspec: hardknott
+    refspec: master
 
   meta-amora:
     path: layers/meta-amora
@@ -48,10 +48,10 @@ bblayers_conf_header:
     BBFILES ?= ""
 local_conf_header:
   standard: |
-    CONF_VERSION = "1"
+    CONF_VERSION = "2"
     PACKAGE_CLASSES = "package_rpm"
     SDKMACHINE = "x86_64"
-    USER_CLASSES = "buildstats image-mklibs image-prelink"
+    USER_CLASSES = "buildstats image-prelink"
     PATCHRESOLVE = "noop"
     TCLIBC = "musl"
     INHERIT += "buildhistory"
@@ -76,31 +76,31 @@ local_conf_header:
     LIBCPLUSPLUS = "--stdlib=libc++"
     CLANGSDK = "1"
   systemd: |
-    DISTRO_FEATURES_append = " systemd"
+    DISTRO_FEATURES:append = " systemd"
     VIRTUAL-RUNTIME_init_manager = "systemd"
   sshd: |
-    EXTRA_IMAGE_FEATURES_append = " ssh-server-dropbear"
+    EXTRA_IMAGE_FEATURES:append = " ssh-server-dropbear"
   wifi: |
-    IMAGE_INSTALL_append = " hostapd dnsmasq iptables"
+    IMAGE_INSTALL:append = " hostapd dnsmasq iptables"
   python: |
-    IMAGE_INSTALL_append = " python3 python3-dbus"
+    IMAGE_INSTALL:append = " python3 python3-dbus"
   usb: |
-    RPI_EXTRA_CONFIG += '\
+    RPI_EXTRA_CONFIG:append = '\
     dtoverlay=dwc2,dr_mode=otg\n\
     '
   adb: |
-    IMAGE_INSTALL_append = " android-tools-adbd"
+    IMAGE_INSTALL:append = " android-tools-adbd"
     PREFERRED_PROVIDER_android-tools-conf = "android-tools-conf-configfs"
     USB_DEBUGGING_ENABLED ??= "1"
   audio: |
-    IMAGE_INSTALL_append = " alsa-utils alsa-plugins"
-    MACHINE_FEATURES += "wm8960"
+    IMAGE_INSTALL:append = " alsa-utils alsa-plugins"
+    MACHINE_FEATURES:append = " wm8960"
   toybox: |
     VIRTUAL-RUNTIME_base-utils = "toybox"
     VIRTUAL-RUNTIME_login_manager = "toybox"
     PREFERRED_PROVIDER_virtual/base-utils = "toybox"
     VIRTUAL-RUNTIME_base-utils-hwclock = "toybox"
     VIRTUAL-RUNTIME_base-utils-syslog = "toybox"
-    IMAGE_INSTALL_append = " dhcpcd nano"
+    IMAGE_INSTALL:append = " dhcpcd nano"
   matter: |
-    IMAGE_INSTALL_append = " matter"
+    IMAGE_INSTALL:append = " matter"
