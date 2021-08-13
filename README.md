@@ -541,7 +541,7 @@ With the board on the network, you can access it using ssh from a host.
 
 ### Configure Software Access Point
 
-If you want to configure Raspberry Pi as a software access point (SoftAP/hotspot) and access it via ssh, follow the instructions at [Setting up a Raspberry Pi as a routed wireless access point](https://www.raspberrypi.org/documentation/configuration/wireless/access-point-routed.md).
+If you want to configure Raspberry Pi as a software access point (SoftAP/hotspot) and access it via ssh, follow the instructions at [Setting up a Raspberry Pi as a routed wireless access point](https://github.com/raspberrypi/documentation/blob/develop/documentation/asciidoc/computers/configuration/access-point-routed.adoc).
 
 ---
 
