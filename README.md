@@ -112,7 +112,8 @@ docker exec -it -u 0 berrydev /bin/bash
 Install kas
 
 ```bash
-apt install python3-pip
+apt update
+apt install -y python3-pip
 pip3 install kas
 ```
 
