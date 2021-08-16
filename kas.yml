@@ -56,6 +56,7 @@ local_conf_header:
     TCLIBC = "musl"
     INHERIT += "buildhistory"
     BUILDHISTORY_COMMIT = "0"
+    IMAGE_FSTYPES += " rpi-sdimg"
   debug-tweaks: |
     EXTRA_IMAGE_FEATURES = "debug-tweaks"
   diskmon: |
