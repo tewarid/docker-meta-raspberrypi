@@ -2,7 +2,7 @@ DESCRIPTION = "Matter is the foundation for connected things."
 HOMEPAGE = "https://buildwithmatter.com"
 
 SRC_URI = " \
-    gitsm://github.com/project-chip/connectedhomeip;protocol=https \
+    gitsm://github.com/tewarid/matter.git;protocol=https \
     file://matter.service \
 "
 SRCREV = "${AUTOREV}"
