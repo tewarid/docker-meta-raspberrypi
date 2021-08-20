@@ -79,10 +79,10 @@ GN_ARGS += "treat_warnings_as_errors=false"
 # Toolchains we will use for the build. We need to point to the toolchain file
 # we've created, set the right target architecture etc.
 GN_ARGS += ' \
-        custom_toolchain="//build/toolchain/yocto:yocto_target" \
-        host_toolchain="//build/toolchain/yocto:yocto_native" \
-        is_clang=true \
-        target_cpu="${@gn_target_arch_name(d)}" \
+    custom_toolchain="//build/toolchain/yocto:yocto_target" \
+    host_toolchain="//build/toolchain/yocto:yocto_native" \
+    is_clang=true \
+    target_cpu="${@gn_target_arch_name(d)}" \
 '
 
 # ARM builds need special additional flags (see ${S}/build/config/arm.gni).
@@ -110,9 +110,9 @@ ARM_VERSION_armv6 = "6"
 TUNE_CCARGS_remove = "-mthumb"
 
 GN_ARGS_append_arm = ' \
-        arm_float_abi="${ARM_FLOAT_ABI}" \
-        arm_fpu="${ARM_FPU}" \
-        arm_tune="${ARM_TUNE}" \
+    arm_float_abi="${ARM_FLOAT_ABI}" \
+    arm_fpu="${ARM_FPU}" \
+    arm_tune="${ARM_TUNE}" \
 '
 
 python do_write_toolchain_file () {
