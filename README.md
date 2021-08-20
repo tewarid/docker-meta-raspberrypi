@@ -100,13 +100,13 @@ This section discusses how you can perform a build and save its history in a Doc
 Create a Docker container
 
 ```bash
-docker run -it --name berrydev crops/yocto:ubuntu-20.04-base
+docker run -it --name amoradev crops/yocto:ubuntu-20.04-base
 ```
 
 Open a privileged shell to install kas
 
 ```bash
-docker exec -it -u 0 berrydev /bin/bash
+docker exec -it -u 0 amoradev /bin/bash
 ```
 
 Install kas
@@ -122,8 +122,8 @@ pip3 install kas
 ### Build on a Linux host or Docker container
 
 ```bash
-git clone https://github.com/tewarid/berry
-cd berry
+git clone https://github.com/tewarid/amora
+cd amora
 kas build kas.yml
 ```
 
@@ -134,9 +134,9 @@ kas build kas.yml
 Clone the project repo on host and run
 
 ```bash
-git clone https://github.com/tewarid/berry
-cd berry
-docker build -t berry:latest .
+git clone https://github.com/tewarid/amora
+cd amora
+docker build -t amora:latest .
 ```
 
 ---
@@ -165,13 +165,13 @@ raspberrypi4      | Raspberry Pi 4 32-bit build
 A multiconfig build can generate images for multiple targets in one build
 
 ```bash
-export KAS_TARGET="mc:berry-raspberrypi0-wifi:core-image-base mc:berry-raspberrypi3:core-image-base mc:berry-raspberrypi4:core-image-base"
+export KAS_TARGET="mc:amora-raspberrypi0-wifi:core-image-base mc:amora-raspberrypi3:core-image-base mc:amora-raspberrypi4:core-image-base"
 ./scripts/build.sh
 ```
 
 Note that multiconfig builds may fail due to memory exhaustion when multiple memory intensive tasks such as LLVM build are run at the same time. The builds also require more storage due to usage of different `TMPDIR` for each target. Specify fewer targets in `KAS_TARGET` if your build environment is low on resources.
 
-Additional targets can be created under [`layers/meta-berry/conf/multiconfig`](layers/meta-berry/conf/multiconfig).
+Additional targets can be created under [`layers/meta-amora/conf/multiconfig`](layers/meta-amora/conf/multiconfig).
 
 ---
 
@@ -200,7 +200,7 @@ Build with [BuildKit or `docker buildx`](https://github.com/moby/buildkit/blob/m
 export DOCKER_BUILDKIT=1
 docker build \
   --ssh default=$SSH_AUTH_SOCK \
-  -t berry:latest .
+  -t amora:latest .
 ```
 
 ## Incremental development
@@ -211,16 +211,16 @@ This section shows how you can create a container from a Docker image, to do add
 
 ### Create a container
 
-Create a container called `berrydev` for incremental development
+Create a container called `amoradev` for incremental development
 
 ```bash
-docker run --name berrydev -it berry:latest
+docker run --name amoradev -it amora:latest
 ```
 
 Start a stopped container
 
 ```bash
-docker start -ai berrydev
+docker start -ai amoradev
 ```
 
 See whether the container is running or stopped
@@ -239,7 +239,7 @@ Make the necessary changes to source code and rebuild
 kas build kas.yml
 ```
 
-Note that BitBake may fail with [Invalid cross-device link error](https://github.com/tewarid/berry/issues/1). Follow the link for additional information and a patch.
+Note that BitBake may fail with [Invalid cross-device link error](https://github.com/tewarid/amora/issues/1). Follow the link for additional information and a patch.
 
 ---
 
@@ -251,10 +251,10 @@ Create Docker container with access to [ssh-agent on host](#access-private-git-r
 
 ```bash
 export SSH_AUTH_SOCK=~/.ssh/ssh-auth.sock
-docker run --name berrydev -it \
+docker run --name amoradev -it \
   -v $SSH_AUTH_SOCK:/run/host-services/ssh-auth.sock \
   -e SSH_AUTH_SOCK="/run/host-services/ssh-auth.sock" \
-  berry:latest
+  amora:latest
 ```
 
 ---
@@ -271,7 +271,7 @@ ssh git@example.com
 If so, you will need to fix access to ssh-agent socket at least once
 
 ```bash
-docker exec -u 0 -it berrydev /bin/bash
+docker exec -u 0 -it amoradev /bin/bash
 chmod 777 /run/host-services/ssh-auth.sock
 ```
 
@@ -285,7 +285,7 @@ To copy download folder from a container to the host
 
 ```bash
 docker cp \
-  berrydev:/home/yoctouser/berry/build/downloads \
+  amoradev:/home/yoctouser/amora/build/downloads \
   build/
 ```
 
@@ -378,10 +378,10 @@ To copy image files from the Docker container to host, use [docker cp](https://d
 
 ```bash
 docker cp \
-  berrydev:/home/yoctouser/berry/build/tmp/deploy/images/raspberrypi/core-image-base-raspberrypi-20210226153757.rootfs.wic.bmap \
+  amoradev:/home/yoctouser/amora/build/tmp/deploy/images/raspberrypi/core-image-base-raspberrypi-20210226153757.rootfs.wic.bmap \
   build/tmp/deploy/images/raspberrypi/
 docker cp \
-  berrydev:/home/yoctouser/berry/build/tmp/deploy/images/raspberrypi/core-image-base-raspberrypi-20210226153757.rootfs.wic.bz2 \
+  amoradev:/home/yoctouser/amora/build/tmp/deploy/images/raspberrypi/core-image-base-raspberrypi-20210226153757.rootfs.wic.bz2 \
   build/tmp/deploy/images/raspberrypi/
 ```
 

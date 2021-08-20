@@ -1,5 +1,5 @@
 build/
 tmp/
 layers/*
-!layers/meta-berry
+!layers/meta-amora
 !layers/meta-matter

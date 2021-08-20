@@ -23,10 +23,10 @@ mkdir -p $output_folder
 
 echo "Copying build artifacts to" $output_folder
 
-docker cp berrydev:/home/yoctouser/berry/build/$TMPDIR/deploy/images/$MACHINE/core-image-base-$MACHINE-$1.rootfs.wic.bmap $output_folder
-docker cp berrydev:/home/yoctouser/berry/build/$TMPDIR/deploy/images/$MACHINE/core-image-base-$MACHINE-$1.rootfs.wic.bz2 $output_folder
+docker cp amoradev:/home/yoctouser/amora/build/$TMPDIR/deploy/images/$MACHINE/core-image-base-$MACHINE-$1.rootfs.wic.bmap $output_folder
+docker cp amoradev:/home/yoctouser/amora/build/$TMPDIR/deploy/images/$MACHINE/core-image-base-$MACHINE-$1.rootfs.wic.bz2 $output_folder
 
 machine_=$(echo $MACHINE | sed -e "s/-/_/g")
-docker cp berrydev:/home/yoctouser/berry/build/buildhistory/images/$machine_/musl/core-image-base/build-id.txt $output_folder
-docker cp berrydev:/home/yoctouser/berry/build/buildhistory/images/$machine_/musl/core-image-base/installed-package-names.txt $output_folder
-docker exec -it berrydev /bin/bash -c "cd /home/yoctouser/berry && source layers/poky/oe-init-build-env > /dev/null && buildhistory-collect-srcrevs -a" > $output_folder/srcrevs.txt
+docker cp amoradev:/home/yoctouser/amora/build/buildhistory/images/$machine_/musl/core-image-base/build-id.txt $output_folder
+docker cp amoradev:/home/yoctouser/amora/build/buildhistory/images/$machine_/musl/core-image-base/installed-package-names.txt $output_folder
+docker exec -it amoradev /bin/bash -c "cd /home/yoctouser/amora && source layers/poky/oe-init-build-env > /dev/null && buildhistory-collect-srcrevs -a" > $output_folder/srcrevs.txt

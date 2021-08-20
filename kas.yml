@@ -35,8 +35,8 @@ repos:
     path: layers/meta-clang
     refspec: hardknott
 
-  meta-berry:
-    path: layers/meta-berry
+  meta-amora:
+    path: layers/meta-amora
 
   meta-matter:
     path: layers/meta-matter

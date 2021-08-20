@@ -206,27 +206,28 @@
 
 <h3 id="prepare-a-docker-container-for-build">Prepare a Docker container for build</h3>
 <p>Create a Docker container</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="ex">docker</span> run -it --name berrydev crops/yocto:ubuntu-20.04-base</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="ex">docker</span> run -it --name amoradev crops/yocto:ubuntu-20.04-base</span></code></pre></div>
 <p>Open a privileged shell to install kas</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="ex">docker</span> exec -it -u 0 berrydev /bin/bash</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="ex">docker</span> exec -it -u 0 amoradev /bin/bash</span></code></pre></div>
 <p>Install kas</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="ex">apt</span> install python3-pip</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a><span class="ex">pip3</span> install kas</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="ex">apt</span> update</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a><span class="ex">apt</span> install -y python3-pip</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a><span class="ex">pip3</span> install kas</span></code></pre></div>
 </section>
 <section class="slide level2">
 
 <h3 id="build-on-a-linux-host-or-docker-container">Build on a Linux host or Docker container</h3>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="fu">git</span> clone https://github.com/tewarid/berry</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a><span class="bu">cd</span> berry</span>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="fu">git</span> clone https://github.com/tewarid/amora</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a><span class="bu">cd</span> amora</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a><span class="ex">kas</span> build kas.yml</span></code></pre></div>
 </section>
 <section class="slide level2">
 
 <h3 id="build-using-docker-build">Build using Docker Build</h3>
 <p>Clone the project repo on host and run</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a><span class="fu">git</span> clone https://github.com/tewarid/berry</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a><span class="bu">cd</span> berry</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a><span class="ex">docker</span> build -t berry:latest .</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a><span class="fu">git</span> clone https://github.com/tewarid/amora</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a><span class="bu">cd</span> amora</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a><span class="ex">docker</span> build -t amora:latest .</span></code></pre></div>
 </section>
 <section class="slide level2">
 
@@ -287,10 +288,10 @@
 
 <h3 id="multiconfig-build">Multiconfig build</h3>
 <p>A multiconfig build can generate images for multiple targets in one build</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a><span class="bu">export</span> <span class="va">KAS_TARGET=</span><span class="st">&quot;mc:berry-raspberrypi0-wifi:core-image-base mc:berry-raspberrypi3:core-image-base mc:berry-raspberrypi4:core-image-base&quot;</span></span>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a><span class="bu">export</span> <span class="va">KAS_TARGET=</span><span class="st">&quot;mc:amora-raspberrypi0-wifi:core-image-base mc:amora-raspberrypi3:core-image-base mc:amora-raspberrypi4:core-image-base&quot;</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a><span class="ex">./scripts/build.sh</span></span></code></pre></div>
 <p>Note that multiconfig builds may fail due to memory exhaustion when multiple memory intensive tasks such as LLVM build are run at the same time. The builds also require more storage due to usage of different <code>TMPDIR</code> for each target. Specify fewer targets in <code>KAS_TARGET</code> if your build environment is low on resources.</p>
-<p>Additional targets can be created under <a href="layers/meta-berry/conf/multiconfig"><code>layers/meta-berry/conf/multiconfig</code></a>.</p>
+<p>Additional targets can be created under <a href="layers/meta-amora/conf/multiconfig"><code>layers/meta-amora/conf/multiconfig</code></a>.</p>
 </section>
 <section class="slide level2">
 
@@ -307,7 +308,7 @@
 <div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true"></a><span class="bu">export</span> <span class="va">DOCKER_BUILDKIT=</span>1</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true"></a><span class="ex">docker</span> build <span class="kw">\</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true"></a>  <span class="ex">--ssh</span> default=<span class="va">$SSH_AUTH_SOCK</span> <span class="kw">\</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true"></a>  <span class="ex">-t</span> berry:latest .</span></code></pre></div>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true"></a>  <span class="ex">-t</span> amora:latest .</span></code></pre></div>
 </section>
 <section id="incremental-development" class="slide level2">
 <h2>Incremental development</h2>
@@ -316,10 +317,10 @@
 <section class="slide level2">
 
 <h3 id="create-a-container">Create a container</h3>
-<p>Create a container called <code>berrydev</code> for incremental development</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true"></a><span class="ex">docker</span> run --name berrydev -it berry:latest</span></code></pre></div>
+<p>Create a container called <code>amoradev</code> for incremental development</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true"></a><span class="ex">docker</span> run --name amoradev -it amora:latest</span></code></pre></div>
 <p>Start a stopped container</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true"></a><span class="ex">docker</span> start -ai berrydev</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true"></a><span class="ex">docker</span> start -ai amoradev</span></code></pre></div>
 <p>See whether the container is running or stopped</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true"></a><span class="ex">docker</span> ps -a</span></code></pre></div>
 </section>
@@ -328,7 +329,7 @@
 <h3 id="run-incremental-build">Run incremental build</h3>
 <p>Make the necessary changes to source code and rebuild</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true"></a><span class="ex">kas</span> build kas.yml</span></code></pre></div>
-<p>Note that BitBake may fail with <a href="https://github.com/tewarid/berry/issues/1">Invalid cross-device link error</a>. Follow the link for additional information and a patch.</p>
+<p>Note that BitBake may fail with <a href="https://github.com/tewarid/amora/issues/1">Invalid cross-device link error</a>. Follow the link for additional information and a patch.</p>
 </section>
 <section class="slide level2">
 
@@ -336,10 +337,10 @@
 <p><em>If you have encrypted your home folder using ecryptfs, you cannot use the procedure below.</em></p>
 <p>Create Docker container with access to <a href="#/access-private-git-repos-in-build">ssh-agent on host</a></p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true"></a><span class="bu">export</span> <span class="va">SSH_AUTH_SOCK=</span>~/.ssh/ssh-auth.sock</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true"></a><span class="ex">docker</span> run --name berrydev -it <span class="kw">\</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true"></a><span class="ex">docker</span> run --name amoradev -it <span class="kw">\</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true"></a>  <span class="ex">-v</span> <span class="va">$SSH_AUTH_SOCK</span>:/run/host-services/ssh-auth.sock <span class="kw">\</span></span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true"></a>  <span class="ex">-e</span> SSH_AUTH_SOCK=<span class="st">&quot;/run/host-services/ssh-auth.sock&quot;</span> <span class="kw">\</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true"></a>  <span class="ex">berry</span>:latest</span></code></pre></div>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true"></a>  <span class="ex">amora</span>:latest</span></code></pre></div>
 </section>
 <section class="slide level2">
 
@@ -348,7 +349,7 @@
 <div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true"></a><span class="co"># Access your Git server instead of example.com</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true"></a><span class="fu">ssh</span> git@example.com</span></code></pre></div>
 <p>If so, you will need to fix access to ssh-agent socket at least once</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true"></a><span class="ex">docker</span> exec -u 0 -it berrydev /bin/bash</span>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true"></a><span class="ex">docker</span> exec -u 0 -it amoradev /bin/bash</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true"></a><span class="fu">chmod</span> 777 /run/host-services/ssh-auth.sock</span></code></pre></div>
 </section>
 <section class="slide level2">
@@ -357,7 +358,7 @@
 <p>A download cache can be setup under <code>build/downloads</code>. It will be copied into the image along with the source code. This can reduce build times significantly.</p>
 <p>To copy download folder from a container to the host</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true"></a><span class="ex">docker</span> cp <span class="kw">\</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true"></a>  <span class="ex">berrydev</span>:/home/yoctouser/berry/build/downloads <span class="kw">\</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true"></a>  <span class="ex">amoradev</span>:/home/yoctouser/amora/build/downloads <span class="kw">\</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true"></a>  <span class="ex">build/</span></span></code></pre></div>
 </section>
 <section class="slide level2">
@@ -412,10 +413,10 @@
 <h3 id="copy-image-file-to-host">Copy image file to host</h3>
 <p>To copy image files from the Docker container to host, use <a href="https://docs.docker.com/engine/reference/commandline/cp/">docker cp</a></p>
 <div class="sourceCode" id="cb26"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true"></a><span class="ex">docker</span> cp <span class="kw">\</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true"></a>  <span class="ex">berrydev</span>:/home/yoctouser/berry/build/tmp/deploy/images/raspberrypi/core-image-base-raspberrypi-20210226153757.rootfs.wic.bmap <span class="kw">\</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true"></a>  <span class="ex">amoradev</span>:/home/yoctouser/amora/build/tmp/deploy/images/raspberrypi/core-image-base-raspberrypi-20210226153757.rootfs.wic.bmap <span class="kw">\</span></span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true"></a>  <span class="ex">build/tmp/deploy/images/raspberrypi/</span></span>
 <span id="cb26-4"><a href="#cb26-4" aria-hidden="true"></a><span class="ex">docker</span> cp <span class="kw">\</span></span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true"></a>  <span class="ex">berrydev</span>:/home/yoctouser/berry/build/tmp/deploy/images/raspberrypi/core-image-base-raspberrypi-20210226153757.rootfs.wic.bz2 <span class="kw">\</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true"></a>  <span class="ex">amoradev</span>:/home/yoctouser/amora/build/tmp/deploy/images/raspberrypi/core-image-base-raspberrypi-20210226153757.rootfs.wic.bz2 <span class="kw">\</span></span>
 <span id="cb26-6"><a href="#cb26-6" aria-hidden="true"></a>  <span class="ex">build/tmp/deploy/images/raspberrypi/</span></span></code></pre></div>
 <p>To write image to a SD card, use <a href="https://github.com/intel/bmap-tools">bmaptool</a>.</p>
 </section>
@@ -510,7 +511,7 @@
 <section class="slide level2">
 
 <h3 id="configure-software-access-point">Configure Software Access Point</h3>
-<p>If you want to configure Raspberry Pi as a software access point (SoftAP/hotspot) and access it via ssh, follow the instructions at <a href="https://www.raspberrypi.org/documentation/configuration/wireless/access-point-routed.md">Setting up a Raspberry Pi as a routed wireless access point</a>.</p>
+<p>If you want to configure Raspberry Pi as a software access point (SoftAP/hotspot) and access it via ssh, follow the instructions at <a href="https://github.com/raspberrypi/documentation/blob/develop/documentation/asciidoc/computers/configuration/access-point-routed.adoc">Setting up a Raspberry Pi as a routed wireless access point</a>.</p>
 </section>
 <section class="slide level2">
 

@@ -10,9 +10,9 @@ RUN apt update \
 
 USER yoctouser
 
-COPY --chown=yoctouser:yoctouser . /home/yoctouser/berry
+COPY --chown=yoctouser:yoctouser . /home/yoctouser/amora
 
-WORKDIR /home/yoctouser/berry
+WORKDIR /home/yoctouser/amora
 
 SHELL ["/bin/bash", "-c"] 
 

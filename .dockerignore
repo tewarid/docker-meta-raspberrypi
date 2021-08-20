@@ -1,7 +1,7 @@
 # exclude layers
 layers/*
 # don't exclude our layers
-!layers/meta-berry
+!layers/meta-amora
 !layers/meta-matter
 # exclude yocto build artifacts on host
 build/*
