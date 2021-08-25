@@ -175,7 +175,7 @@ Additional targets can be created under [`layers/meta-amora/conf/multiconfig`](l
 
 ---
 
-### Access private Git repos in build
+### Access private Git repos in Docker build
 
 _If you have encrypted your home folder using ecryptfs, you cannot use the procedure below._
 
@@ -191,7 +191,7 @@ ssh-add -l
 Edit [Dockerfile](Dockerfile) and add `--mount=type=ssh,mode=777` to build
 
 ```dockerfile
-RUN --mount=type=ssh,mode=777 kas build kas.yml
+RUN --mount=type=ssh,mode=777 KAS_TARGET=$KAS_TARGET ./scripts/build.sh
 ```
 
 Build with [BuildKit or `docker buildx`](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/syntax.md)
